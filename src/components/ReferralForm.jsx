@@ -34,10 +34,11 @@ export default function ReferralForm({ onSuccess }) {
     setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append("name", name);
-      fd.append("email", email);
-      fd.append("phone", phone);
-      fd.append("jobTitle", jobTitle);
+      fd.append("name", name.trim());
+      fd.append("email", email.trim());
+      fd.append("phone", phone.trim());
+      fd.append("jobTitle", jobTitle.trim());
+      fd.append("status", "Pending");
       fd.append("resume", resume);
       await api.post("/candidates", fd);
       setName("");
@@ -48,8 +49,12 @@ export default function ReferralForm({ onSuccess }) {
       setErrors({});
       setSuccess("Referral submitted successfully");
       if (onSuccess) onSuccess();
-    } catch {
-      setErrors((prev) => ({ ...prev, form: "Submission failed" }));
+    } catch (e) {
+      const msg =
+        e?.response?.data?.message ||
+        e?.response?.data?.error ||
+        "Submission failed";
+      setErrors((prev) => ({ ...prev, form: msg }));
       setSuccess("");
     } finally {
       setSubmitting(false);
