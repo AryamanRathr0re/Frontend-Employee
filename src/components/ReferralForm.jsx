@@ -19,8 +19,8 @@ export default function ReferralForm({ onSuccess }) {
       e.email = "Invalid email";
     if (!phone.trim() || !/^[0-9+\-\s()]{7,}$/.test(phone))
       e.phone = "Invalid phone";
-    if (!resume) e.resume = "PDF required";
-    else if (
+    if (
+      resume &&
       !(resume.type === "application/pdf" || /\.pdf$/i.test(resume.name))
     )
       e.resume = "Only PDF allowed";
@@ -39,7 +39,7 @@ export default function ReferralForm({ onSuccess }) {
       fd.append("phone", phone.trim());
       fd.append("jobTitle", jobTitle.trim());
       fd.append("status", "Pending");
-      fd.append("resume", resume);
+      if (resume) fd.append("resume", resume);
       await api.post("/candidates", fd);
       setName("");
       setEmail("");
@@ -104,7 +104,7 @@ export default function ReferralForm({ onSuccess }) {
         {errors.jobTitle && <div className="error">{errors.jobTitle}</div>}
       </div>
       <div className="card-controls">
-        <label className="label">Resume (PDF)</label>
+        <label className="label">Resume (PDF, optional)</label>
         <input
           className="input"
           type="file"
